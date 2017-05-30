@@ -1,0 +1,91 @@
+# DataFrames from Dictionary
+import pandas as pd
+data = {'weekday' : ['sun','sun','mon','mon'], 
+        'city' : ['Austin','Dallas','Austin','Dallas'],
+        'visitors': [139,237,326,456],
+        'signups': [7,12,3,5] }
+users = pd.DataFrame(data)
+print(users)
+
+# DataFrames from List
+import pandas as pd
+cities = ['nsk','pune','mumbai']
+signups = [7,12,4]
+visitors = [139,231,244]
+weekdays = ['Sun', 'Mon', 'Mon']
+list_labels = ['City','Signups','Visitors','WeekDay']
+list_cols = [cities, signups, visitors, weekdays]
+print(zip(list_labels, list_cols))
+zipped = list(zip(list_labels, list_cols))
+print(zipped)
+data = dict(zipped)
+print(data)
+users = pd.DataFrame(data)
+print(users)
+
+#Broadcasting with Dict
+heights = [23.0,56.0,87.0]
+data = {'Heights' : heights, 'Sex' : "M"}
+results = pd.DataFrame(data)
+print(results)
+
+# Change in Column and Index labels
+results.columns = ['Height (in)', 'Gender']
+results.index = ['A', 'B', 'C']
+print(results)
+
+import pandas as pd 
+eggs = [12,32,34]
+salt = [12.0,43.0,'NaN']
+spam = [12,15,34]
+df_labels = ['Eggs', 'Salt', 'Spam']
+df_cols = [eggs, salt, spam]
+zipped = list(zip(df_labels, df_cols))
+print(zipped)
+data = dict(zipped)
+df = pd.DataFrame(data)
+print(df)
+
+df.index = ['Jan', 'Feb', 'Mar']
+print(df)
+
+df['Salt']['Jan']
+
+df.Eggs['Mar']
+
+df.loc['Feb','Spam']
+
+df.iloc[1,2]
+
+#to Print perticular columns
+print(df[['Eggs','Salt']])
+
+df.Salt > 15
+
+df[df.Salt > 15]
+
+df[(df.Salt >= 12) | (df.Eggs <= 32)]
+
+#select all nonzero columns 
+df2.loc[:,df2.all()]
+
+#select any columns with Nans
+df2.loc[:,df2.isnull().any()]
+
+#select columns without Nans
+df2.loc[:,df2.notnull().all()]
+
+df2.dropna(how = 'any')
+
+df.Eggs[df.Salt > 12]
+
+df.Eggs[df.Salt > 12 ]+= 5df.index
+df
+
+df['Eggs'].floordiv(12)
+
+df.index.str.upper()
+
+df.Eggs.apply(lambda n : n/2)
+
+df['salty_eggs'] = df.Eggs + df.Spam
