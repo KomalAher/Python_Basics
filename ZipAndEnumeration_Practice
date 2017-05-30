@@ -1,0 +1,35 @@
+#create Zip
+list1 = ['aa', 'bb', 'cc']
+list2 = ['xx', 'yy', 'zz']
+list3 = ['kk','oo','ll']
+z = zip(list1, list2, list3)
+print(z)
+
+print(z[0][2])
+
+# Unzip elements
+r1,r2,r3 = zip(*z)
+print(r1)
+print(r2)
+print(r3)
+
+# Iterating over Dictionary
+dict1 = {'aa':'alex', 'bb':'brayn', 'cc':'Chang'}
+for key,value in dict1.items():
+    print(key,value)
+    
+#Enumerate()
+list_e = ['aa','bb','cc']
+print(list_e)
+enum = enumerate(list_e)
+print(enum)
+elist = list(enum)
+print(elist)
+
+list_e = ['aa','bb','cc']
+print(list_e)
+for index,value in enumerate(list_e, start=10):
+    print(index,value)
+ 
+ 
+ 
