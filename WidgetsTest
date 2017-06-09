@@ -1,0 +1,55 @@
+from bokeh.io import output_file, show,curdoc
+from bokeh.layouts import widgetbox,layout
+from bokeh.models.widgets import RadioGroup
+from bokeh.plotting import figure, ColumnDataSource
+import pandas as pd
+
+filename = "/home/synerzip/PycharmProjects/db.csv"
+df = pd.read_csv(filename, header=None, names=['ProductName', 'Quantity', 'Size', 'Price', 'Availability'])
+df = df.sort_values('ProductName')
+print(df)
+productList = list(df['ProductName'].unique())
+print(productList)
+df1 = df[df['ProductName'] == 'Samsung Canvas']
+
+product_sets = {}
+product_sets["ProductName"] = list(df1['ProductName'])
+product_sets["Quantity"] = list(df1['Quantity'])
+product_sets["Size"] = list(df1['Size'])
+
+source = ColumnDataSource(
+    data=product_sets
+)
+
+plot = figure(plot_width=600, plot_height=600, title="Quantity-Size Graph")
+output_file("layout_widgets.html")
+plot.vbar(x = 'Size', top="Quantity", bottom=0, width=0.5,source = source)
+
+def onChangeProduct(attr, old, new):
+    print (new)
+    if new == 1:
+        df1 = df[df['ProductName'] == 'Apple iPhone 5']
+    elif new == 2:
+        df1 = df[df['ProductName'] == 'Nokia Lumia 800']
+    else:
+        df1 = df[df['ProductName'] == 'Samsung Canvas']
+
+    source.data["ProductName"] = list(df1['ProductName'])
+    source.data["Quantity"] = list(df1['Quantity'])
+    source.data["Size"] = list(df1['Size'])
+    plot.xaxis.axis_label = new
+    print(df1)
+
+radio_group = RadioGroup(
+        labels=productList, active=0)
+radio_group.on_change("active", onChangeProduct)
+
+inputs = widgetbox(radio_group)
+layout_view = layout([
+    [inputs, plot],
+], sizing_mode='fixed')
+
+curdoc().add_root(layout_view)
+curdoc().title = "RadioGroupTest"
+
+show(layout_view)
