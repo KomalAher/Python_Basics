@@ -1,0 +1,118 @@
+from bokeh.charts import Bar, output_file, show
+from bokeh.charts.attributes import cat, color
+from bokeh.charts.operations import blend
+from bokeh.plotting import figure
+import pandas as pd
+from modules.dataInput.ReadFile import getData
+from modules.dataInput.ReadFile import getDB
+from modules.dataInput.ReadFile import getCleanedDF
+
+def getSimpleBar():
+    df = getData()
+    data = {"Count": list(df['Quantity']), "ProductName": list(df['ProductName'])}
+    new_df = pd.DataFrame(data)
+    print(new_df)
+    plot = figure()
+    plot = Bar(new_df, 'ProductName', values='Count', title="Bar Graph", width=800, height=800)
+    output_file("/home/synerzip/PycharmProjects/my_project/graphs/simpleBarGraph.html")
+    show(plot)
+
+def getFrequencyBar():
+    clean_df = getCleanedDF()
+    print(clean_df.info())
+    muskList = clean_df['0'][clean_df['168'] == 1]
+    nonMuskList = clean_df['0'][clean_df['168'] == 0]
+    dict = {"Type": ["MUSK", "NON-MUSK"],
+            "Frequency": [len(muskList), len(nonMuskList)]}
+    df = pd.DataFrame(dict)
+    plot = figure()
+    plot = Bar(df, "Type", "Frequency", title="Frequency Chart", width=600, height=600)
+    output_file("/home/synerzip/PycharmProjects/my_project/graphs/FrequencyChart.html")
+    show(plot)
+
+def getGlyphs():
+    df = getData()
+    data = {"Count": list(df['Quantity']), "ProductName": list(df['ProductName'])}
+    new_df = pd.DataFrame(data)
+    print(new_df)
+    plot = figure()
+    plot.square(df['Quantity'], df['Size'], size=10)
+    output_file("/home/synerzip/PycharmProjects/my_project/graphs/Glyph_Test.html")
+    show(plot)
+
+def getSimpleStackedBar():
+        df = getCleanedDF()
+        df = df.groupby(['2', '3'], sort=True).count()
+        print(df)
+        bar = Bar(df,
+                  values=blend('7', '8', name='types', labels_name='type'),
+                  label=cat(columns='168', sort=False),
+                  stack=cat(columns='type', sort=False),
+                  color=color(columns='type', palette=['red', 'blue'],
+                              sort=False),
+                  legend='top_right',
+                  title="StackedChart Example")
+        output_file("/home/synerzip/PycharmProjects/my_project/graphs/SimpleStacked_bar.html",
+                    title="Simple Stacked Bar")
+        show(bar)
+
+def getOrderedStackedBar():
+        df = getData()
+        df = df.drop_duplicates('ProductName')
+        df['Total'] = df['Quantity'] + df['Size']
+        df = df.sort_values(by='Total', ascending=False)
+        print(df)
+        bar = Bar(df,
+                  values=blend('Size', 'Quantity', name='types', labels_name='type'),
+                  label=cat(columns='ProductName', sort=False),
+                  stack=cat(columns='type', sort=False),
+                  color=color(columns='type', palette=['red', 'blue'],
+                              sort=False),
+                  legend='top_right',
+                  title="StackedChart Example",
+                  tooltips=[('type', '@type'), ('Product', '@ProductName')])
+        output_file("/home/synerzip/PycharmProjects/my_project/graphs/OrderedStacked_bar.html",
+                    title="stacked_bar.py example")
+        show(bar)
+
+def getSordedStackedBar():
+        df = getData()
+        df = df.drop_duplicates('ProductName')
+        df = df.sort_values(by='Size', ascending=False)
+        print(df)
+        bar = Bar(df,
+                  values=blend('Size', 'Quantity', name='types', labels_name='type'),
+                  label=cat(columns='ProductName', sort=False),
+                  stack=cat(columns='type', sort=False),
+                  color=color(columns='type', palette=['red', 'blue'],
+                              sort=False),
+                  legend='top_right',
+                  title="StackedChart Example",
+                  tooltips=[('type', '@type'), ('Product', '@ProductName')])
+        output_file("/home/synerzip/PycharmProjects/my_project/graphs/Sortedstacked_bar.html",
+                    title="stacked_bar.py example")
+        show(bar)
+
+def sortStack():
+        df = getDB()
+        df = df.drop('Size', axis=1)
+        df = df.drop('Price', axis=1)
+        df = df.drop('Availability', axis=1)
+
+        stack_df = pd.DataFrame({"Count": df.groupby(['ProductName', 'Quantity']).size()}).reset_index()
+        sum = stack_df.groupby('ProductName')['Count'].sum()
+        stack_df['total'] = stack_df.ProductName.apply(sum.get_value)
+        stack_df = stack_df.sort_values(by=['total', 'Count'], ascending=False)
+
+        print(stack_df)
+        bar = Bar(stack_df,
+                  values='Count',
+                  label=cat(columns='ProductName', sort=False),
+                  stack=cat(columns='Quantity', sort=False),
+                  legend='top_right',
+                  legend_sort_field='color',
+                  legend_sort_direction='ascending',
+                  title="StackedChart Example")
+        output_file("/home/synerzip/PycharmProjects/my_project/graphs/StackSorting_Graph.html",
+                    title="StackSorting_Graph.py example")
+        show(bar)
